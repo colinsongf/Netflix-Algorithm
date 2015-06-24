@@ -13,12 +13,12 @@ import json
 # netflix_predict
 # ------------
 
-def netflix_predict () :
+def netflix_predict (b, c) :
     """
     returns predict 
     """
-
-    return 1
+    average = (b + c)/2
+    return average
 
 # ------------
 # netflix_rmse
