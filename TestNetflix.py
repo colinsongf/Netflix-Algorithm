@@ -34,7 +34,7 @@ class TestNetflix (TestCase) :
     # ----
    
     def test_rmse_1 (self) :
-        v = netflix_rmse(1, 1)
+        v = netflix_rmse((1,2), (1,2))
         self.assertEqual(v, 0)
 
     def test_rmse_2 (self) :

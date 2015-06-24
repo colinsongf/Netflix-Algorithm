@@ -6,8 +6,8 @@
 
 from functools import reduce
 from math      import sqrt
-from numpy     import mean, sqrt, square, subtract
 import json
+from urllib.request import urlopen
 
 # ------------
 # netflix_predict
@@ -17,8 +17,8 @@ def netflix_predict (b, c) :
     """
     returns predict 
     """
-    average = (b + c)/2
-    return average
+    #average = (b + c)/2
+    return 2
 
 # ------------
 # netflix_rmse
@@ -30,7 +30,13 @@ def netflix_rmse (a, p) :
     j the end       of the range, inclusive
     return the max cycle length of the range [i, j]
     """
-    return sqrt(mean(square(subtract(a, p))))
+    assert hasattr(a, "__len__")
+    assert hasattr(p, "__len__")
+    assert hasattr(a, "__iter__")
+    assert hasattr(p, "__iter__")
+    z = zip(a, p)
+    v = sum((x - y) ** 2 for x, y in z)
+    return sqrt(v / len(a))
 
 # -------------
 # netflix_print
@@ -63,20 +69,20 @@ def netflix_solve (r, w) :
     r a reader
     w a writer
     """
-    
+
     # open cache files from hard coded address
-    """
-    with open('/u/thunt/cs373-netflix-tests/ddg625-ActualCache.json', 'r') as f:
-        original_rating = json.load(f)
-    with open('/u/thunt/cs373-netflix-tests/irvin-user_avg.json', 'r') as i:
-        avg_user_rating = json.load(i)
-    with open('/u/thunt/cs373-netflix-tests/irvin-movie_avg.json', 'r') as g:
-        avg_movie_rating = json.load(g)
-    """   
- 
+    cache1 = urlopen("http://www.cs.utexas.edu/~ebanner/netflix-tests/ezo55-Average_Viewer_Rating_Cache.json")
+    average_user_rating = json.loads(cache1.read().decode(cache1.info().get_param('charset') or 'utf-8'))
+
+    cache2 = urlopen("http://www.cs.utexas.edu/~ebanner/netflix-tests/BRG564-Average_Movie_Rating_Cache.json")
+    average_movie_rating = json.loads(cache2.read().decode(cache2.info().get_param('charset') or 'utf-8'))
+
+    cache3 = urlopen("http://www.cs.utexas.edu/~ebanner/netflix-tests/pam2599-probe_solutions.json")
+    probe_rating = json.loads(cache3.read().decode(cache3.info().get_param('charset') or 'utf-8'))
+
     # parses input movie by movie and places into temp_list
     # where first value is movie_id and the rest are customer_id's
-    
+
     temp_list = []
     actual_predictions = []
     calculated_predictions = []
@@ -89,11 +95,21 @@ def netflix_solve (r, w) :
                 iter_temp = iter(temp_list)
                 movie_id = next(iter_temp)
                 netflix_print(w, movie_id)
-                for q in iter_temp :
-                    #prediction = netflix_predict(movie_id, user_id, av_movie_rating, av_user_rating)
-                    #netflix_print(w, prediction)
-                    #calculated_predictions.append(prediciton)
-                    actual_predictions.append(0)
+                for user_id in iter_temp :
+                    # get average (movie and user) ratings from caches
+                    u_id = user_id[:-1]
+                    m_id = movie_id[:-1]
+                    user_rating = average_user_rating[str(u_id)]
+                    movie_rating = average_movie_rating[str(m_id)]
+                    # use cache values to predict rating
+                    prediciton = netflix_predict(user_rating, movie_rating)
+                    netflix_print(w, prediciton)
+                    # store predicted in list
+                    calculated_predictions.append(prediciton)
+                    # get actual rating from probe cache and store in list
+                    probe_users = probe_rating[str(m_id)]
+                    actual_rating = probe_users[str(u_id)]
+                    actual_predictions.append(actual_rating)
                 temp_list.clear()
                 temp_list.append(s[:-1])
             else :
@@ -102,17 +118,27 @@ def netflix_solve (r, w) :
                 temp_list.append(s[:-1])
                 count += 1
         else :
-            temp_list.append(s)     
+            temp_list.append(s)
     # handle last list iteration
     iter_temp = iter(temp_list)
     movie_id = next(iter_temp)
     netflix_print(w, movie_id)
-    for q in iter_temp :
-        #prediction = netflix_predict(movie_id, user_id, av_movie_rating, av_user_rating)
-        #netflix_print(w, prediction)
-        #calculated_predictions.append(prediciton)
-        actual_predictions.append(0)
+    for user_id in iter_temp :
+        # get average (movie and user) ratings from caches
+        u_id = user_id[:-1]
+        m_id = movie_id[:-1]
+        user_rating = average_user_rating[str(u_id)]
+        movie_rating = average_movie_rating[str(m_id)]
+        # use cache values to predict rating
+        prediciton = netflix_predict(user_rating, movie_rating)
+        netflix_print(w, prediciton)
+        # store predicted in list
+        calculated_predictions.append(prediciton)
+        # get actual rating from probe cache and store in list
+        probe_users = probe_rating[str(m_id)]
+        actual_rating = probe_users[str(u_id)]
+        actual_predictions.append(actual_rating)
 
-    #rmse = netflix_rmse(actual_predictions, calculated_predictions)
-    #w.write(len(calculated_predictions))
-   
+    rmse = netflix_rmse(actual_predictions, calculated_predictions)
+    netflix_print_rmse(w, rmse)
+    w.write(str(len(calculated_predictions)) + "\n")
