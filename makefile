@@ -51,6 +51,5 @@ RunNetflix.out: RunNetflix.py
 
 TestNetflix.out: TestNetflix.py
 	coverage3 run    --branch TestNetflix.py >  TestNetflix.out 2>&1
-	coverage3 report -m                      >> TestNetflix.out
+	coverage3 report --omit=*numpy* -m >> TestNetflix.out
 	cat TestNetflix.out
-
