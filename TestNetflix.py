@@ -9,7 +9,7 @@
 from io       import StringIO
 from unittest import main, TestCase
 
-from Netflix import netflix_predict, netflix_rmse, netflix_print, netflix_print_rmse, netflix_solve
+from Netflix import netflix_predict, netflix_rmse, netflix_print, netflix_print_rating, netflix_print_rmse, netflix_solve
 
 # -----------
 # TestNetflix
@@ -21,13 +21,40 @@ class TestNetflix (TestCase) :
     # ----
 
     def test_predict_1 (self) :
-        i = netflix_predict(5, 5)
+        i = netflix_predict(5, 5, 3.67, 5)
         self.assertEqual(i,  5)
 
     def test_predict_2 (self) :
-        i = netflix_predict(1,1)
+        i = netflix_predict(1, 1, 3.67, 5)
         self.assertEqual(i,  1)
    
+    def test_predict_3 (self) :
+        i = netflix_predict(False, 4, 3.67, 5)
+        self.assertEqual(i,  3.9835)
+
+    def test_predict_4 (self) :
+        i = netflix_predict(False, False, 3.67, 5)
+        self.assertEqual(i,  3.67)
+
+    def test_predict_5 (self) :
+        i = netflix_predict(5, False, 3.67, 5)
+        self.assertEqual(i,  4.9335)
+    
+    def test_predict_6 (self) :
+        i = netflix_predict(5, 3, 3.67, 1)
+        self.assertEqual(i, 4.1465)
+
+    def test_predict_7 (self) :
+        i = netflix_predict(5, 3, 3.67, 29)
+        self.assertEqual(i,  4.4401)
+
+    def test_predict_8 (self) :
+        i = netflix_predict(5, 3, 3.67, 90)
+        self.assertEqual(i, 4.4401)
+
+    def test_predict_9 (self) :
+        i = netflix_predict(5, 3, 3.67, 335)
+        self.assertEqual(i,  4.4401)
 
     # ----
     # rmse
@@ -86,6 +113,25 @@ class TestNetflix (TestCase) :
     # print rmse
     # -----
 
+    def test_print_rating_1 (self) :
+        w = StringIO()
+        netflix_print_rating(w, 3.33422)
+        self.assertEqual(w.getvalue(), "3.3\n")
+
+    def test_print_rating_2 (self) :
+        w = StringIO()
+        netflix_print_rating(w, 2.11111)
+        self.assertEqual(w.getvalue(), "2.1\n")
+
+    def test_print_rating_3 (self) :
+        w = StringIO()
+        netflix_print_rating(w, 1.19)
+        self.assertEqual(w.getvalue(), "1.2\n")
+
+    # -----
+    # print rmse
+    # -----
+
     def test_print_rmse_1 (self) :
         w = StringIO()
         netflix_print_rmse(w, .951)
@@ -114,13 +160,18 @@ class TestNetflix (TestCase) :
     # -----
     # solve
     # -----
-"""
+
     def test_solve_1 (self) :
-        r = StringIO("1 10\n100 200\n201 210\n900 1000\n")
+        r = StringIO("10:\n1952305\n1531863\n")
         w = StringIO()
         netflix_solve(r, w)
-        self.assertEqual(w.getvalue(), "1 10 20\n100 200 125\n201 210 89\n900 1000 174\n")
-"""
+        self.assertEqual(w.getvalue(), "10:\n3.8\n3.5\nRMSE: 0.65\n2 records total\n")
+
+    def test_solve_2 (self) :
+        r = StringIO("10:\n1952305\n1531863\n10000:\n200206\n523108")
+        w = StringIO()
+        netflix_solve(r, w)
+        self.assertEqual(w.getvalue(), "10:\n3.8\n3.5\n10000:\n4.5\n4.3\nRMSE: 0.55\n4 records total\n")
 
 # ----
 # main

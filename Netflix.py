@@ -30,29 +30,17 @@ def netflix_predict (user, movie, total, num) :
     elif (type(user) is not int) and (type(user) is not float) :
         predict = (movie * .95) + (total * .05)
     elif (type(movie) is not int) and (type(movie) is not float) :
-        predict = (user * .95) + (total * .05)
-
+        predict = (user * .95) + (total * .05) 
+    
     # general predictions
     else :
-          if (num < 2) and ((movie - total) < 0) :
+          if   num < 2 :
               predict = total + ((user - (1.5 * total)) + (movie - (.55 * total)))
-          elif (num < 2) and ((movie - total) > 0) :
-              predict = total + ((user - (.97 * total)) + (movie - (.75 * total)))
-          elif (num < 5) and ((movie - total) < 0) :
-              predict = total + ((user - (.97 * total)) + (movie - (.80 * total)))
-          elif (num < 5) and ((movie - total) > 0) :
-              predict = total + ((user - (.97 * total)) + (movie - (.80 * total)))
-          elif (num > 20) and ((movie - total) < 0) :
-              predict = total + ((user - (.97 * total)) + (movie - (.98 * total)))
-          elif (num > 20) and ((movie - total) > 0) :
-              predict = total + ((user - (.97 * total)) + (movie - (.98 * total)))
-          elif (num > 30) and ((movie - total) < 0) :
+          elif num < 5 :
+              predict = total + ((user - (.97 * total)) + (movie - (.80 * total))) 
+          elif num > 25 :
               predict = total + ((user - (.97 * total)) + (movie - (1 * total)))
-          elif (num > 30) and ((movie - total) > 0) :
-              predict = total + ((user - (.97 * total)) + (movie - (1 * total)))
-          elif (num > 50) and ((movie - total) < 0) :
-              predict = total + ((user - (.90 * total)) + (movie - (1.5 * total)))
-          elif (num > 50) and ((movie - total) > 0) :
+          elif num > 50:
               predict = total + ((user - (.90 * total)) + (movie - (1.5 * total)))
           elif num > 300 :
               predict = movie
@@ -136,7 +124,7 @@ def netflix_solve (r, w) :
 
     cache3 = urlopen("http://www.cs.utexas.edu/~ebanner/netflix-tests/pam2599-probe_solutions.json")
     probe_rating = json.loads(cache3.read().decode(cache3.info().get_param('charset') or 'utf-8'))
-
+  
     # parses input movie by movie and places into temp_list
     # where first value is movie_id and the rest are customer_id's
 
@@ -147,28 +135,32 @@ def netflix_solve (r, w) :
     total_sum = 0
     probe_average = 0
     total_num = 0
-    list_len = []
+
     # calculates total average from probe
     for z in probe_rating.keys() :
         inner = probe_rating[z]
         for e in inner.keys() :
            total_sum += inner[e]
            total_num += 1
-    probe_average = total_sum / total_num
+    probe_average = total_sum / total_num    
 
-    # gets predictions
+    # goes through input and gets predictions
     for s in r :
         if s[-2] == ':' :
+            # makes predictions starting from when second movie is read in
             if count > 0 :
-                list_len.append(len(temp_list)-1)
                 # handle old list --> make predictions 
                 iter_temp = iter(temp_list)
                 movie_id = next(iter_temp)
                 netflix_print(w, movie_id)
                 for user_id in iter_temp :
                     # get average (movie and user) ratings from caches
-                    u_id = str(user_id[:-1])
-                    m_id = (movie_id[:-1])
+                    if user_id[-1] == '\n' :
+                        u_id = user_id[:-1]
+                        m_id = movie_id[:-1]
+                    else :
+                        u_id = user_id
+                        m_id = movie_id[:-1]
                     if u_id in average_user_rating :
                         user_rating = average_user_rating[u_id]
                     else :
@@ -204,8 +196,12 @@ def netflix_solve (r, w) :
     netflix_print(w, movie_id)
     for user_id in iter_temp :
         # get average (movie and user) ratings from caches
-        u_id = user_id[:-1]
-        m_id = movie_id[:-1]
+        if user_id[-1] == '\n' :
+            u_id = user_id[:-1]
+            m_id = movie_id[:-1]
+        else :
+            u_id = user_id
+            m_id = movie_id[:-1]
         if u_id in average_user_rating :
             user_rating = average_user_rating[u_id]
         else :
@@ -227,8 +223,9 @@ def netflix_solve (r, w) :
         actual_rating = probe_users[str(u_id)]
         actual_predictions.append(actual_rating)
 
+    # print rmse and total ratings
     rmse = netflix_rmse(actual_predictions, calculated_predictions)
     netflix_print_rmse(w, rmse)
     w.write(str(len(calculated_predictions)) + " records total\n")
-    list_len.sort()
-    print(list_len)          
+
+
