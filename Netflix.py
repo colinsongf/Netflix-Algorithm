@@ -11,29 +11,12 @@
 # Netflix.py
 # -------
 
-from numpy     import mean, sqrt, square, subtract
-from io        import StringIO
+from io       import StringIO
 from functools import reduce
 from math      import sqrt
+from numpy     import mean, sqrt, square, subtract
 import json
 from urllib.request import urlopen
-
-# ------------
-# netflix_rmse
-# ------------
-
-def netflix_rmse (a, p) :
-    """
-    O(1) in space
-    O(n) in time
-    """
-    assert hasattr(a, "__len__")
-    assert hasattr(p, "__len__")
-    assert hasattr(a, "__iter__")
-    assert hasattr(p, "__iter__")
-    z = zip(a, p)
-    v = sum((x - y) ** 2 for x, y in z)
-    return sqrt(v / len(a))
 
 # ------------
 # netflix_predict
@@ -83,6 +66,18 @@ def netflix_predict (user, movie, total, num) :
     assert predict <= 5
 
     return predict
+
+# ------------
+# netflix_rmse
+# ------------
+
+def netflix_rmse (a, p) :
+    """
+    i the beginning of the range, inclusive
+    j the end       of the range, inclusive
+    return the max cycle length of the range [i, j]
+    """
+    return sqrt(mean(square(subtract(a, p))))
 
 # -------------
 # netflix_print
