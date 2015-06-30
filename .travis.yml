@@ -1,7 +1,3 @@
-# This file is named "travis.sample.yml".
-# Rename it ".travis.yml".
-# http://docs.travis-ci.com/user/build-configuration/
-
 sudo: required
 
 language: python
@@ -9,9 +5,12 @@ language: python
 python:
     - "3.4"
 
+virtualenv:
+      system_site_packages: true
+
 before_install:
     - sudo apt-get update
-    - pip install numpy 
+    - sudo apt-get install -qq python-numpy python-scipy
 
 install:
     - pip install --upgrade pip

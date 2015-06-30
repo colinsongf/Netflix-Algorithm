@@ -11,10 +11,10 @@
 # Netflix.py
 # -------
 
-from io       import StringIO
+from numpy     import mean, sqrt, square, subtract
+from io        import StringIO
 from functools import reduce
 from math      import sqrt
-from numpy     import mean, sqrt, square, subtract
 import json
 from urllib.request import urlopen
 
