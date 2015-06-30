@@ -226,6 +226,5 @@ def netflix_solve (r, w) :
     # print rmse and total ratings
     rmse = netflix_rmse(actual_predictions, calculated_predictions)
     netflix_print_rmse(w, rmse)
-    w.write(str(len(calculated_predictions)) + " records total\n")
 
 
