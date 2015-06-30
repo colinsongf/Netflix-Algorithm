@@ -11,6 +11,7 @@ python:
 
 before_install:
     - sudo apt-get update
+    - pip install numpy 
 
 install:
     - pip install --upgrade pip
@@ -25,8 +26,6 @@ before_script:
     - python3 --version
     - coverage3 --version
     - python3 -c "import numpy; print(numpy.__version__)"
-    - pip install numpy
-    - pip3 install numpy
 
 script:
     - date

@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 
 # -------
+# Jung Yoon
+# Project 2 - Netflix
+# CS 373 - Summer 2015
+# Professor Downing
+# -------
+
+# -------
 # Netflix.py
 # -------
 
 from io       import StringIO
 from functools import reduce
 from math      import sqrt
-from numpy     import mean, sqrt, square, subtract
 import json
 from urllib.request import urlopen
 
@@ -66,11 +72,16 @@ def netflix_predict (user, movie, total, num) :
 
 def netflix_rmse (a, p) :
     """
-    i the beginning of the range, inclusive
-    j the end       of the range, inclusive
-    return the max cycle length of the range [i, j]
+    O(1) in space
+    O(n) in time
     """
-    return sqrt(mean(square(subtract(a, p))))
+    assert hasattr(a, "__len__")
+    assert hasattr(p, "__len__")
+    assert hasattr(a, "__iter__")
+    assert hasattr(p, "__iter__")
+    z = zip(a, p)
+    v = sum((x - y) ** 2 for x, y in z)
+    return sqrt(v / len(a))
 
 # -------------
 # netflix_print
@@ -226,6 +237,5 @@ def netflix_solve (r, w) :
     # print rmse and total ratings
     rmse = netflix_rmse(actual_predictions, calculated_predictions)
     netflix_print_rmse(w, rmse)
-    w.write(str(len(calculated_predictions)) + " records total\n")
 
 
