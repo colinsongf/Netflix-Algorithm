@@ -11,12 +11,12 @@ python:
 
 before_install:
     - sudo apt-get update
+    - pip install numpy 
 
 install:
     - pip install --upgrade pip
     - pip install coverage
     - pip install numpy
-    - pip3 install numpy
 
 before_script:
     - uname -a
