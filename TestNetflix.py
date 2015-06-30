@@ -165,13 +165,13 @@ class TestNetflix (TestCase) :
         r = StringIO("10:\n1952305\n1531863\n")
         w = StringIO()
         netflix_solve(r, w)
-        self.assertEqual(w.getvalue(), "10:\n3.8\n3.5\nRMSE: 0.65\n2 records total\n")
+        self.assertEqual(w.getvalue(), "10:\n3.8\n3.5\nRMSE: 0.65\n")
 
     def test_solve_2 (self) :
         r = StringIO("10:\n1952305\n1531863\n10000:\n200206\n523108")
         w = StringIO()
         netflix_solve(r, w)
-        self.assertEqual(w.getvalue(), "10:\n3.8\n3.5\n10000:\n4.5\n4.3\nRMSE: 0.55\n4 records total\n")
+        self.assertEqual(w.getvalue(), "10:\n3.8\n3.5\n10000:\n4.5\n4.3\nRMSE: 0.55\n")
 
 # ----
 # main

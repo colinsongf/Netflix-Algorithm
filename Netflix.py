@@ -2,8 +2,8 @@
 
 # -------
 # Jung Yoon
-# CS 373
-# Summer 2015
+# Project 2 - Netflix
+# CS 373 - Summer 2015
 # Professor Downing
 # -------
 
@@ -14,10 +14,9 @@
 from io       import StringIO
 from functools import reduce
 from math      import sqrt
+from numpy     import mean, sqrt, square, subtract
 import json
 from urllib.request import urlopen
-from numpy import mean, sqrt, square, subtract
-
 
 # ------------
 # netflix_predict
@@ -234,9 +233,5 @@ def netflix_solve (r, w) :
     # print rmse and total ratings
     rmse = netflix_rmse(actual_predictions, calculated_predictions)
     netflix_print_rmse(w, rmse)
-<<<<<<< HEAD
-=======
-    w.write(str(len(calculated_predictions)) + " records total\n")
 
 
->>>>>>> parent of effd8b7... Fixed script
