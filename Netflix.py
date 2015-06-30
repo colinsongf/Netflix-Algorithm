@@ -1,15 +1,23 @@
 #!/usr/bin/env python3
 
 # -------
+# Jung Yoon
+# CS 373
+# Summer 2015
+# Professor Downing
+# -------
+
+# -------
 # Netflix.py
 # -------
 
 from io       import StringIO
 from functools import reduce
 from math      import sqrt
-from numpy     import mean, sqrt, square, subtract
 import json
 from urllib.request import urlopen
+from numpy import mean, sqrt, square, subtract
+
 
 # ------------
 # netflix_predict
